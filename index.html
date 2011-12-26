@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Sudoku</title>
+    <meta name="viewport" content="width=590,user-scalable=no" />
+    <script type="text/javascript">
+      var level = 0;
+      function prev() {
+	  if (level > 0)
+	      loadimage(level-1);
+      }
+      function next() {
+	  loadimage(level+1);
+      }
+      function loadimage(n) {
+	  if (n < 0)
+	      return;
+	  level = n;
+	  board = document.getElementById('board');
+	  board.src = document.location + 'board.svg?level=' + n;
+	  label = document.getElementById('level');
+	  label.textContent = 'Level: ' + (level+1);
+      }
+      function select() {
+	  var answer = prompt ("Go to level:", level+1);
+	  if (answer)
+	      loadimage(parseInt(answer)-1);
+      }
+    </script>
+    <style type="text/css">
+      body {
+	  text-align: center;
+      }
+      .prev {
+	  float: left;
+      }
+      .next {
+	  float: right;
+      }
+      .level {
+	  text-align: center;
+      }
+      .game {
+	  display: inline-block;
+      }
+      .game img {
+	  display: block;
+      }
+      .button {
+	  display: inline-block;
+
+	  color: #3A3D42;
+	  text-decoration: none;
+	  text-align: center;
+	  text-shadow: 0 1px 1px white;
+	  font-weight: bold;
+
+	  border: 0;
+	  border-top: 1px solid rgba(255,255,255,.45);
+	  background: #ECEDEF;
+
+	  box-shadow: 0 1px 3px rgba(0,0,0,.7), 0 1px 0 rgba(0,0,0,.3);
+
+	  margin: 0 .2%;
+	  padding: .3em .3em .3em .3em;
+	  color: black;
+	  font-size: 1.5em;
+	  cursor: pointer;
+
+	  -webkit-user-select: none; /* Safari, Chrome */
+	  -khtml-user-select: none; /* Konqueror */
+	  -moz-user-select: none; /* Firefox */
+	  user-select: none; /* CSS3 */
+      }
+      .button:active {
+	  background: #CCC;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="game">
+      <img id="board" src="/board.svg?level=0" alt="game board" />
+      <div class="panel">
+        <div class="prev button" onclick="prev();">&lt;&lt;</div>
+	<div class="next button" onclick="next();">&gt;&gt;</div>
+        <div class="level button" id="level" onclick="select();">Level: 1</div>
+      </div>
+    </div>
+  </body>
+</html>
+
+<!-- Local Variables: -->
+<!-- indent-tabs-mode: nil -->
+<!-- End: -->
