@@ -14,7 +14,7 @@
 	       (:file "loader-sdm")
 	       (:file "board")
 	       (:file "sudoku")
-	       (:static-file "learningcurve.sdm")
+	       (:static-file "sudoku.sdm")
 	       (:static-file "index.html"))
   :depends-on ("hunchentoot" "parenscript" "xml-emitter"))
 
