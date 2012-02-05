@@ -25,12 +25,14 @@
 
 (in-package :cl-user)
 
-(defpackage :sudoku
-  (:use :cl
-        :hunchentoot
-	:parenscript
-	:xml-emitter)
-  (:export :server-start
-	   :server-stop))
+(defpackage #:sudoku
+  (:use #:cl
+        #:hunchentoot
+	#:parenscript
+	#:xml-emitter)
+  (:export #:*game-source*
+           #:*load-path*
+           #:server-start
+	   #:server-stop))
 
 ;;; package.lisp ends here

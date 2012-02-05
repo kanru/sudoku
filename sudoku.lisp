@@ -25,9 +25,15 @@
 
 (in-package :sudoku)
 
-(defparameter *game-source* "learningcurve.sdm")
+(defvar *game-source* "sudoku.sdm")
+(defvar *load-path* (list *default-pathname-defaults*))
 
 (defvar *server*)
+
+(defun locate-source (source)
+  (loop for path in *load-path*
+        when (probe-file (merge-pathnames source path))
+          return it))
 
 (define-easy-handler (index-html :uri "/") ()
   (setf (hunchentoot:content-type*) "text/html")
