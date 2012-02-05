@@ -7,6 +7,7 @@
   :version "0.1.0"
   :author "Kan-Ru Chen <kanru@kanru.info>"
   :licence "GPLv3"
+  :description "Sudoku web viewer"
   :serial t
   :components ((:file "packages")
 	       (:file "board-svg")
