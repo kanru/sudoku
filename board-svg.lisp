@@ -25,8 +25,8 @@
 
 (in-package :sudoku)
 
-(defconstant +svg-1.1-namespace+ "http://www.w3.org/2000/svg")
-(defconstant +svg-1.1-doctype+ "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"
+(defparameter +svg-1.1-namespace+ "http://www.w3.org/2000/svg")
+(defparameter +svg-1.1-doctype+ "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\"
          \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">")
 
 (defmacro with-svg-output ((stream width height) &body body)
