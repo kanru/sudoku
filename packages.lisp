@@ -28,7 +28,6 @@
 (defpackage #:sudoku
   (:use #:cl
         #:hunchentoot
-	#:parenscript
 	#:xml-emitter)
   (:export #:*game-source*
            #:*load-path*

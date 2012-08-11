@@ -1,6 +1,6 @@
 (defpackage :sudoku-system
   (:use :cl :asdf))
-          
+
 (in-package :sudoku-system)
 
 (defsystem "sudoku"
@@ -10,11 +10,10 @@
   :description "Sudoku web viewer"
   :serial t
   :components ((:file "packages")
-	       (:file "board-svg")
-	       (:file "loader-sdm")
-	       (:file "board")
-	       (:file "sudoku")
-	       (:static-file "sudoku.sdm")
-	       (:static-file "index.html"))
-  :depends-on ("hunchentoot" "parenscript" "xml-emitter"))
-
+               (:file "board-svg")
+               (:file "loader-sdm")
+               (:file "board")
+               (:file "sudoku")
+               (:static-file "sudoku.sdm")
+               (:static-file "index.html"))
+  :depends-on ("hunchentoot" "xml-emitter"))
