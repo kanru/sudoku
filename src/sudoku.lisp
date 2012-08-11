@@ -26,22 +26,23 @@
 (in-package :sudoku)
 
 (defvar *game-source* "sudoku.sdm")
-(defvar *load-path* (list *default-pathname-defaults*))
+(defvar *index-file* "index.html")
+
+(defvar *static-directory* (make-pathname
+                            :directory
+                            (append (pathname-directory
+                                     #.(or *load-truename* *compile-file-truename*))
+                                    '(:up "static"))))
 
 (defvar *server*)
 
-(defun locate-source (source)
-  (loop for path in *load-path*
-        when (probe-file (merge-pathnames source path))
-          return it))
-
 (define-easy-handler (index-html :uri "/") ()
   (setf (hunchentoot:content-type*) "text/html")
-  (handle-static-file "index.html"))
+  (handle-static-file (merge-pathnames *index-file* *static-directory* )))
 
 (define-easy-handler (svg :uri "/board.svg") (level)
   (setf (hunchentoot:content-type*) "image/svg+xml")
-  (with-sdm-file (*game-source*)
+  (with-sdm-file ((merge-pathnames *game-source* *static-directory*))
     (with-output-to-string (*standard-output*)
       (let ((level (parse-integer (or level "0"))))
 	(board-draw level)))))
