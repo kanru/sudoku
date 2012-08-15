@@ -62,7 +62,7 @@
 				*board-border-width*
 				*board-line-width*)))))
 
-(defun board-draw (n)
+(defun board-draw (n &optional (step 0))
   (with-draw-context (*canvas-width* *canvas-height*)
     (with-offset ((center-offset *board-width* *canvas-width*)
 		  (center-offset *board-height* *canvas-height*))
@@ -70,13 +70,13 @@
       (board-draw-border)
       (let ((game (sudoku-game n))
 	    (half-cell (/ *board-width* 18.0)))
-	(loop for row in game
-	      for y from half-cell by (* 2 half-cell)
-	      do
-		 (loop for num in row
-		       for x from half-cell by (* 2 half-cell)
-		       do
-			  (draw-number-centered num x y
+	(loop :for row :from 0 :below (row-max game)
+	      :for y :from half-cell :by (* 2 half-cell)
+	      :do
+		 (loop :for col :from 0 :below (col-max game)
+		       :for x :from half-cell :by (* 2 half-cell)
+		       :do
+			  (draw-number-centered (game-value game row col) x y
 						*board-font-size*
 						*board-font-family*)))))))
 
