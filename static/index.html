@@ -5,19 +5,32 @@
     <meta name="viewport" content="width=590,user-scalable=no" />
     <script type="text/javascript">
       var level = 0;
+      var step = 0;
       function prev() {
-	  if (level > 0)
+	  if (level > 0) {
+              step = 0;
 	      loadimage(level-1);
+          }
       }
       function next() {
-	  loadimage(level+1);
+          step = 0;
+	  loadimage(level+1, step);
       }
-      function loadimage(n) {
+      function prev_step() {
+	  if (step > 0) {
+	      loadimage(level, step-1);
+          }
+      }
+      function next_step() {
+	  loadimage(level, step+1);
+      }
+      function loadimage(n, s) {
 	  if (n < 0)
 	      return;
 	  level = n;
+          step = s;
 	  board = document.getElementById('board');
-	  board.src = document.location + 'board.svg?level=' + n;
+	  board.src = document.location + 'board.svg?level=' + n + '&step=' + s;
 	  label = document.getElementById('level');
 	  label.textContent = 'Level: ' + (level+1);
       }
@@ -82,7 +95,9 @@
       <img id="board" src="/board.svg?level=0" alt="game board" />
       <div class="panel">
         <div class="prev button" onclick="prev();">&lt;&lt;</div>
+        <div class="prev step button" onclick="prev_step();">&lt;</div>
 	<div class="next button" onclick="next();">&gt;&gt;</div>
+	<div class="next step button" onclick="next_step();">&gt;</div>
         <div class="level button" id="level" onclick="select();">Level: 1</div>
       </div>
     </div>

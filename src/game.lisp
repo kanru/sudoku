@@ -29,17 +29,20 @@
 
 (defclass cell ()
   ((candidates :initform (list 1 2 3 4 5 6 7 8 9)
-               :accessor candidates)))
+               :accessor candidates)
+   (answer :initform nil
+           :accessor answer)))
 
 (defclass game ()
   ((row-max :initform 9
             :accessor row-max)
    (col-max :initform 9
             :accessor col-max)
-   (cells :initform (make-array '(9 9) :element-type 'cell)
+   (cells :initform (make-array '(9 9))
           :accessor cells)))
 
 (defmethod initialize-instance :after ((instance game) &rest initargs)
+  (declare (ignore initargs))
   (with-accessors ((cells cells))
       instance
     (loop :for index :from 0 :below (array-total-size cells)
@@ -47,48 +50,10 @@
                     (make-instance 'cell)))))
 
 (defmethod print-object ((cell cell) stream)
-  (print-unreadable-object (cell stream :type t :identity t)
-    (princ (slot-value cell 'candidates))))
-
-(defmethod cell-value ((cell cell))
-  (with-accessors ((candidates candidates))
-      cell
-    (when (endp (cdr candidates))
-      (car candidates))))
-
-(defmethod (setf cell-value) (value (cell cell))
-  (check-type value candidates)
-  (with-accessors ((candidates candidates))
-      cell
-    (setf candidates (list value))))
-
-(defmethod cell-candi ((cell cell))
-  (with-accessors ((candidates candidates))
-      cell
-    candidates))
-
-(defmethod cell-strike ((cell cell) (candidate candidates))
-  (with-accessors ((candidates candidates))
-      cell
-    (setf candidates (remove candidate candidates))))
-
-(defmethod copy-cell ((cell cell))
-  (let ((new (make-instance 'cell)))
-    (setf (slot-value new 'candidates)
-          (slot-value cell 'candidates))))
-
-(defmethod game-candi ((game game) y x)
-  (candidates (aref (cells game) y x)))
-
-(defmethod (setf game-candi) (value (game game) y x)
-  (setf (candidates (aref (cells game) y x)) value))
-
-(defmethod game-value ((game game) y x)
-  (value (aref (cells game) y x)))
-
-(defmethod (setf game-value) (value (game game) y x)
-  (setf (value (aref (cells game) y x)) value)
-  (setf (candidates (aref (cells game) y x)) nil))
+  (print-unreadable-object (cell stream :type t :identity nil)
+    (princ (candidates cell) stream)
+    (when (answer cell)
+      (format stream "[~a]" (answer cell)))))
 
 (defun make-game-from-list (list)
   (let ((game (make-instance 'game)))
@@ -97,38 +62,40 @@
           :do
              (loop :for x :from 0
                    :for col :in row
-                   :do (setf (game-value game y x) col))
+                   :do (when col
+                         (let ((n (- (char-code col) (char-code #\0))))
+                           (setf (answer (cell (coord x y) game)) n)
+                           (setf (candidates (cell (coord x y) game)) nil)
+                           (cleanup (coord x y) game))))
           :finally (return game))))
 
-;;; Sudoku Resolver
+(defun cell (coord game)
+  (aref (cells game)
+        (row coord)
+        (col coord)))
 
-(defun copy-game (game)
-  (let ((new-game (make-instance 'game)))
-    (loop :for row :from 0 :below (row-max game)
-          :do (loop :for col :from 0 :below (col-max game)
-                    :do (setf (game-value new-game row col)
-                              (game-value game row col))
-                        (setf (game-candi new-game row col)
-                              (game-candi game row col))))))
+(defun single-candidate-p (coord game)
+  (let ((cell (cell coord game)))
+    (= 1 (length (candidates cell)))))
 
-(defun resolver-identity (game)
-  (copy-game game))
+(defun answered-p (coord game)
+  (answer (cell coord game)))
 
-(defun strike (game row col value)
-  (loop :for row :from 0 :below (row-max game)
-        :do (setf (game-candi game row col)
-                  (remove value (game-candi game row col))))
-  (loop :for col :from 0 :below (col-max game)
-        :do (setf (game-candi game row col)
-                  (remove value (game-candi game row col)))))
+(defun remove-n (n coord game)
+  (let ((cell (cell coord game)))
+    (setf (candidates cell)
+          (remove n (candidates cell)))))
 
-(defun resolver-strike-row (game)
-  (let ((new-game (copy-game game)))
-    (loop :for row :from 0 :below (row-max game)
-          :do (loop :for col :from 0 :below (col-max game)
-                    :do (when (game-value game row col)
-                          (strike game row col
-                                  (game-value game row col)))))))
+(defun mark-answer (coord game)
+  (cond
+    ((single-candidate-p coord game)
+     (let ((cell (cell coord game)))
+       (setf (answer cell) (first (candidates cell)))
+       (setf (candidates cell) nil)
+       (answer cell)))
+    ((answer (cell coord game))
+     (answer (cell coord game)))
+    (t (error "Only single candidate cell could make answer."))))
 
 ;;; SDM Loader
 

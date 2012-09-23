@@ -63,6 +63,8 @@
 				*board-line-width*)))))
 
 (defun board-draw (n &optional (step 0))
+  (dotimes (_ step)
+    (resolve-1 (sudoku-game n)))
   (with-draw-context (*canvas-width* *canvas-height*)
     (with-offset ((center-offset *board-width* *canvas-width*)
 		  (center-offset *board-height* *canvas-height*))
@@ -76,8 +78,10 @@
 		 (loop :for col :from 0 :below (col-max game)
 		       :for x :from half-cell :by (* 2 half-cell)
 		       :do
-			  (draw-number-centered (game-value game row col) x y
-						*board-font-size*
-						*board-font-family*)))))))
+			  (draw-number-centered
+                           (answer (cell (coord row col) game))
+                           x y
+                           *board-font-size*
+                           *board-font-family*)))))))
 
 ;;; board.lisp ends here

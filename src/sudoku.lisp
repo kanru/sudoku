@@ -40,12 +40,13 @@
   (setf (hunchentoot:content-type*) "text/html")
   (handle-static-file (merge-pathnames *index-file* *static-directory* )))
 
-(define-easy-handler (svg :uri "/board.svg") (level)
+(define-easy-handler (svg :uri "/board.svg") (level step)
   (setf (hunchentoot:content-type*) "image/svg+xml")
   (with-sdm-file ((merge-pathnames *game-source* *static-directory*))
     (with-output-to-string (*standard-output*)
-      (let ((level (parse-integer (or level "0"))))
-	(board-draw level)))))
+      (let ((level (parse-integer (or level "0")))
+            (step (parse-integer (or step "0"))))
+	(board-draw level step)))))
 
 (defun server-start ()
   (setf *server* (make-instance 'easy-acceptor :port 4242))
